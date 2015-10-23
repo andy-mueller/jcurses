@@ -1,0 +1,16 @@
+
+#################
+## IntelliJ idea
+#################
+*.iml
+/.idea
+/.idea/
+.idea/
+
+#################
+## Maven
+#################
+/target
+target/
+
+notes.txt
