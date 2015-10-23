@@ -41,7 +41,7 @@
             <layout>default</layout>
         </repository>
     </repositories>
-    
+
     <build>
         <plugins>
             <plugin>
