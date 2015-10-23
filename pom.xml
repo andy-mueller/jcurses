@@ -21,6 +21,18 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/andy-mueller/crudetech-libs</connection>
+        <developerConnection>scm:git:https://github.com/andy-mueller/crudetech-libs</developerConnection>
+        <url>scm:git:https://github.com/andy-mueller/crudetech-libs</url>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>public.maven.repository</id>
+            <name>Public Local Repository</name>
+            <url>file:/${env.USERPROFILE}/working-copies/puplic-maven-repo</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
