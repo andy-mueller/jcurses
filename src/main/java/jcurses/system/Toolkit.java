@@ -2,7 +2,6 @@ package jcurses.system;
 
 import jcurses.util.Rectangle;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
@@ -33,7 +32,7 @@ public class Toolkit {
 	private static short [] [] __colorpairs = new short [8] [8];
 
 	static {
-		System.load(getLibraryPath());
+		NativeLibrary.load();
 		fillBasicColors(__basicColors);
 		fillAttributes(__attributes);
 		fillColorPairs();
@@ -41,7 +40,7 @@ public class Toolkit {
 		init();
 	}
 
-	private static Hashtable __clips = new Hashtable();
+	private static Hashtable<Thread, ArrayList<Rectangle>> __clips = new Hashtable<>();
 
 	/**
 	 *  The method sets the clippping rectangle for the current thread.
@@ -52,9 +51,9 @@ public class Toolkit {
 	 * @param clipRect clip rectangle to be set
 	 */
 	public static void setClipRectangle(Rectangle clipRect) {
-		ArrayList clips = (ArrayList)__clips.get(Thread.currentThread());
+		ArrayList<Rectangle> clips = __clips.get(Thread.currentThread());
 		if (clips == null) {
-			clips = new ArrayList();
+			clips = new ArrayList<>();
 			__clips.put(Thread.currentThread(), clips);
 		}
 		clips.add(clipRect);
@@ -64,7 +63,7 @@ public class Toolkit {
 	 * Removes the evtl. before set clip rectangle
 	 */
 	public static void unsetClipRectangle() {
-		ArrayList clips = (ArrayList)__clips.get(Thread.currentThread());
+		ArrayList<Rectangle> clips = __clips.get(Thread.currentThread());
 		if (clips == null) {
 			return;
 		}
@@ -77,13 +76,13 @@ public class Toolkit {
 	}
 
 	private static Rectangle getCurrentClipRectangle() {
-		ArrayList clips = (ArrayList)__clips.get(Thread.currentThread());
+		ArrayList<Rectangle> clips = __clips.get(Thread.currentThread());
 		if ((clips == null) || (clips.size()==0)) {
 			return null;
 		}
-		Rectangle result = (Rectangle)clips.get(0);
+		Rectangle result = clips.get(0);
 		for (int i=1; i<clips.size(); i++) {
-			Rectangle temp = (Rectangle)clips.get(i);
+			Rectangle temp = clips.get(i);
 			result = result.intersection(temp);
 			if (result.isEmpty()) {
 				return result;
@@ -92,34 +91,6 @@ public class Toolkit {
 		return result;
 	}
 
-	private static String getLibraryPath() {
-		String url = ClassLoader.getSystemClassLoader().getResource("jcurses/system/Toolkit.class").toString();
-		url=url.trim();
-		if (url.startsWith("jar:file:")) {
-			url = url.substring("jar:file:".length(),url.length());
-			url = url.substring(0,url.length()-"/jcurses.jar!/jcurses/system/Toolkit.class".length());
-		} else if (url.startsWith("file:")) {
-			url = url.substring("file:".length(),url.length());
-			url = url.substring(0,url.length()-"/classes/jcurses/system/Toolkit.class".length());
-			url = new File(url,"lib").getAbsolutePath();
-		} else {
-			throw new RuntimeException("couldn't find jcurses library");
-		}
-		String [] fileNames = new File(url).list();
-		boolean found = false;
-		for (int i=0; i<fileNames.length; i++) {
-			String name = fileNames[i];
-			if (name.trim().startsWith("libjcurses")) {
-				url = new File(url,name).getAbsolutePath();
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			throw new RuntimeException("couldn't find jcurses library");  
-		}
-		return url;
-	}
 
 	private static void fillColorPairs() {
 		for (int i=0; i<8; i++) {
@@ -153,9 +124,8 @@ public class Toolkit {
 	private static short getColorPairNumber(CharColor ch) {
 		if (!hasColors()) {
 			return ch.getBlackWhiteAttribute();
-		} else {
 		}
-		short background = ch.getBackground();
+        short background = ch.getBackground();
 		short foreground = ch.getForeground();
 		return __colorpairs [background] [foreground];
 	}
@@ -258,7 +228,7 @@ public class Toolkit {
 	 * @param x the x coordinate of the top left corner of the rectangle to be painted
 	 * @param y the y coordinate of the top left corner of the rectangle to be painted
 	 * @param width the width of the rectangle to be painted
-	 * @param heigtht the height of the rectangle to be painted
+	 * @param height the height of the rectangle to be painted
 	 * @param color color to fill the rectangle, only background part is used
 	 */
 	public static void drawRectangle(int x, int y, int width, int height, CharColor color) {
@@ -274,7 +244,7 @@ public class Toolkit {
 	}
 
 	private static LinePart getLinePart(int begin, int end, int alignment, int position, Rectangle clipRect) {
-		LinePart result = null;
+		LinePart result;
 		if (begin > end) {
 			int tmp = end;
 			end = begin;
@@ -370,8 +340,8 @@ public class Toolkit {
 
 
 	private static Point getCornerCenterPoint(int startX,int startY,int endX,int endY,short alignment) {
-		int x = 0;
-		int y = 0;
+		int x;
+		int y;
 		y = (alignment == CORNER_UNDER_LINE)?Math.min(startY,endY):Math.max(startY,endY); 
 		x = (y == startY)?endX:startX;
 
@@ -382,10 +352,10 @@ public class Toolkit {
 	private static short getCornerChar(int startX,int startY,int endX,int endY,short alignment) {
 		int cornerX = Math.min(startX,endX);
 		int cornerY = (startX == cornerX)?startY:endY;
-		int otherX = (startX == cornerX)?endX:startX;
+		//int otherX = (startX == cornerX)?endX:startX;
 		int otherY = (startX == cornerX)?endY:startY;
 
-		short result = 0;
+		short result;
 		if (cornerY < otherY) {
 			if (alignment == CORNER_UNDER_LINE) {
 				result = UR_CORNER; 
@@ -414,7 +384,7 @@ public class Toolkit {
 	 * @param endY the y coordinate of the end point
 	 * @param alignment this parameter states, whether the line, that connects the start point with end point, lies <bold>UNDER</bold>
 	 * the corner point (alignment == 0 ) or <bold>OVER</bold> (alignment == 1), or the corner char, if the corner has no sides, it.
-	 * @color the color attributes for of the corner
+	 * @param color the color attributes for of the corner
 	 * 
 	 */
 	public static void drawCorner(int startX, int startY, int endX, int endY, CharColor color, short alignment) {
@@ -425,8 +395,8 @@ public class Toolkit {
 		} else {
 			Point center = getCornerCenterPoint(startX,startY,endX,endY,alignment);
 			if ((alignment == CORNER_UNDER_LINE) || (alignment == CORNER_OVER_LINE)) {
-				LinePart verticalPart = null;
-				LinePart horizontalPart = null;
+				LinePart verticalPart;
+				LinePart horizontalPart;
 				if (startX == center.x) {
 					int endY2 = (startY < center.y)?(center.y-1):(center.y+1);
 					verticalPart = new LinePart(startY,endY2,center.x,VERTICAL);
@@ -456,8 +426,7 @@ public class Toolkit {
 			}
 
 		}
-		return;
-	}
+    }
 
 
 	private static native void drawCorner(int startX, int startY, int endX, int endY, short colorPairNumber, long attr, short alignment);
@@ -469,7 +438,7 @@ public class Toolkit {
 	 * @param color color attributes of the border
 	 */
 	public static void drawBorder(Rectangle rect, CharColor color) {
-		drawBorder((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight(), color);
+		drawBorder(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
 	}
 
 	/**
@@ -478,7 +447,7 @@ public class Toolkit {
 	 * @param x the x coordinate of the top left corner of the border to be painted
 	 * @param y the y coordinate of the top left corner of the border to be painted
 	 * @param width the width of the border to be painted
-	 * @param heigtht the height of the border to be painted
+	 * @param height the height of the border to be painted
 	 * @param color color attributes of the border 
 	 */
 	public static void drawBorder(int x, int y, int width, int height, CharColor color) {
@@ -522,9 +491,9 @@ public class Toolkit {
 	 *  The method prints a string on the screen
 	 * 
 	 * @param text string to be printed
-	 * @param rectangle the rectangle, within which the string must lie. If the string 
+	 * @param rect the rectangle, within which the string must lie. If the string
 	 * doesn't fit within the rectangle it will be broken.
-	 * @param colr attributes of the string
+	 * @param color attributes of the string
 	 */
 	public static void printString(String text, Rectangle rect, CharColor color) {
 		Rectangle clipRect = getCurrentClipRectangle();
@@ -540,7 +509,7 @@ public class Toolkit {
 
 
 	private static void printStringWithoutClipping(String text, Rectangle rect, CharColor color) {
-		byte [] bytes = null;
+		byte [] bytes;
 		if (__encoding == null) {
 			bytes = text.getBytes();
 		} else {
@@ -557,8 +526,8 @@ public class Toolkit {
 	}
 
 
-	private static List getLines(String text, int maxWidth) {
-		ArrayList list = new ArrayList();
+	private static List<String> getLines(String text, int maxWidth) {
+		ArrayList<String> list = new ArrayList<>();
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0; i<text.length(); i++) {
 			char c = text.charAt(i);
@@ -572,7 +541,7 @@ public class Toolkit {
 				}
 				buffer = new StringBuffer();
 			} else if (c == '\r') {
-				//ignore
+				ignore();
 			} else {
 				buffer.append(c);
 			}
@@ -584,15 +553,18 @@ public class Toolkit {
 		return list;
 	}
 
+    private static void ignore() {
+    }
 
-	private static void printClippedString(Rectangle oldRect,Rectangle newRect, String text, CharColor color) {
-		List lines = getLines(text, oldRect.getWidth());
+
+    private static void printClippedString(Rectangle oldRect,Rectangle newRect, String text, CharColor color) {
+		List<String> lines = getLines(text, oldRect.getWidth());
 		int beginY = Math.max(oldRect.getY(), newRect.getY());
-		int endY = Math.min(oldRect.getY()+oldRect.getHeight()-1,newRect.getY()+newRect.getHeight()-1);
+		//int endY = Math.min(oldRect.getY()+oldRect.getHeight()-1,newRect.getY()+newRect.getHeight()-1);
 		if (lines.size() > 0) {
 			for (int i=0;  i< lines.size(); i++) {
 				if (((i+oldRect.getY())>=beginY) && ((i+oldRect.getY())>=beginY)) {
-					String line = (String)lines.get(i);
+					String line = lines.get(i);
 					int beginPart = 0;
 					if (oldRect.getX() < newRect.getX()) {
 						beginPart = newRect.getX()-oldRect.getX();
@@ -644,9 +616,7 @@ public class Toolkit {
 	private static native void printString(byte [] chars, int x, int y, int width, int height, short colorPairNumber, long attr);
 
 
-	private static byte [] __bytes = new byte [1];
-
-	/**
+    /**
 	 *  The method reads the next code (ascii or control ) fro input stream an wraps it into an instance 
 	 * of {@link jcurses.system.InputChar}
 	 * 
@@ -666,8 +636,8 @@ public class Toolkit {
 	/**
 	 * The method change the background and the foreground colors of an given rectangle on the schreen
 	 * 
-	 * @param rectangle rectangle, whose colors are to be changed
-	 * @param colors new colors
+	 * @param rect rectangle, whose colors are to be changed
+	 * @param color new colors
 	 */
 	public static void changeColors(Rectangle rect, CharColor color) {
 		Rectangle clipRect = getCurrentClipRectangle();
