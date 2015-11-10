@@ -11,7 +11,7 @@ public enum Os {
 
     static Os currentOs(Properties sysProps) {
         final String currentOsName = sysProps.getProperty("os.name", "unknown");
-        final String currentOsArch = sysProps.getProperty("os.arch");
+        final String currentOsArch = sysProps.getProperty("os.arch", "unknown");
         if (currentOsName.toLowerCase().indexOf("windows") >= 0) {
             if (is64Bit(currentOsArch)) {
                 return Windows64;

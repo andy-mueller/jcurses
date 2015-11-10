@@ -1,12 +1,17 @@
 package jcurses.system;
 
 import java.io.*;
+import java.util.Properties;
 
 public class NativeLibrary {
 
     public static final String NO_LIB_FOR_PLATFORM_DEFINED = "NO_LIB_FOR_PLATFORM_DEFINED";
 
-    public static void load() {
+    public NativeLibrary(Loader loader, Properties sysProps) {
+
+    }
+
+    public void load() {
         String libraryResourcePath = getLibraryResourcePathForPlatform();
         if (NO_LIB_FOR_PLATFORM_DEFINED.equals(libraryResourcePath)) {
             raiseNoLibraryPackagedError();
@@ -60,14 +65,21 @@ public class NativeLibrary {
     }
 
     private static String getLibraryResourcePathForPlatform() {
-//        if (Os.isWindowsX86()) {
-//            return "/META-INF/windows-x86/libjcurses.dll";
-//        } else if (Os.isMacOsx()) {
-//            return "/META-INF/osx/libjcurses.jnilib";
-//        } else if (Os.isLinuxX86()) {
-//            return "/META-INF/linux-x86/libjcurses.so";
-//        }
-        return NO_LIB_FOR_PLATFORM_DEFINED;
+        switch (Os.currentOs()){
+
+            case Unknown:
+                return NO_LIB_FOR_PLATFORM_DEFINED;
+            case Windows32:
+                return "/META-INF/windows32/libjcurses.dll";
+            case Windows64:
+                return "/META-INF/windows64/libjcurses64.dll";
+            case Linux64:
+                return "/META-INF/linux64/libjcurses64.so";
+            case Linux32:
+                return "/META-INF/linux32/libjcurses.so";
+            default:
+                return NO_LIB_FOR_PLATFORM_DEFINED;
+        }
     }
 
     private static File computeLibraryExtractionLocation() {
@@ -76,5 +88,13 @@ public class NativeLibrary {
         } else {
             return new File(System.getProperty("java.io.tmpdir"));
         }
+    }
+
+    public interface Loader {
+        void load(String resourcePath);
+    }
+
+    public interface LoaderStep {
+        void load(Os linux64);
     }
 }
