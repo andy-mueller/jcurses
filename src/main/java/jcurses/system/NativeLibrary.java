@@ -60,13 +60,13 @@ public class NativeLibrary {
     }
 
     private static String getLibraryResourcePathForPlatform() {
-        if (Os.isWindowsX86()) {
-            return "/META-INF/windows-x86/libjcurses.dll";
-        } else if (Os.isMacOsx()) {
-            return "/META-INF/osx/libjcurses.jnilib";
-        } else if (Os.isLinuxX86()) {
-            return "/META-INF/linux-x86/libjcurses.so";
-        }
+//        if (Os.isWindowsX86()) {
+//            return "/META-INF/windows-x86/libjcurses.dll";
+//        } else if (Os.isMacOsx()) {
+//            return "/META-INF/osx/libjcurses.jnilib";
+//        } else if (Os.isLinuxX86()) {
+//            return "/META-INF/linux-x86/libjcurses.so";
+//        }
         return NO_LIB_FOR_PLATFORM_DEFINED;
     }
 
