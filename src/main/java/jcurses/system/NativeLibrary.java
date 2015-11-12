@@ -7,7 +7,7 @@ public class NativeLibrary {
 
     public static final String NO_LIB_FOR_PLATFORM_DEFINED = "NO_LIB_FOR_PLATFORM_DEFINED";
 
-    public NativeLibrary(Loader loader, Properties sysProps) {
+    public NativeLibrary(Object loader, Properties sysProps) {
 
     }
 
@@ -90,11 +90,4 @@ public class NativeLibrary {
         }
     }
 
-    public interface Loader {
-        void load(String resourcePath);
-    }
-
-    public interface LoaderStep {
-        void load(Os linux64);
-    }
 }
