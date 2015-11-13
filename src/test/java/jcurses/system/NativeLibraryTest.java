@@ -52,6 +52,24 @@ public class NativeLibraryTest {
 
         verify(nextStep).load("/META-INF/linux64/libjcurses64.so");
     }
+    @Test
+    public void givenAnotherOs_ResourcePathIsMapped() throws Exception {
+        Loader<String> nextStep = mockLoader();
+
+        ResourcePathLookup resourcePathLookup = new ResourcePathLookup(nextStep);
+        resourcePathLookup.load(Os.Windows32);
+
+        verify(nextStep).load("/META-INF/windows32/libjcurses.dll");
+    }
+    @Test
+    public void givenWin64_ResourcePathIsMapped() throws Exception {
+        Loader<String> nextStep = mockLoader();
+
+        ResourcePathLookup resourcePathLookup = new ResourcePathLookup(nextStep);
+        resourcePathLookup.load(Os.Windows64);
+
+        verify(nextStep).load("/META-INF/windows64/libjcurses64.dll");
+    }
 
 
     @Test
@@ -77,30 +95,67 @@ public class NativeLibraryTest {
         void load(TKey key);
     }
 
-    static class OsLookup implements Loader<Properties>{
-        private final Loader<Os> nextStep;
-        public OsLookup(Loader<Os> nextStep) {
+    static abstract class LoaderStep<TThisKey, TNextKey> implements Loader<TThisKey>{
+        private final Loader<TNextKey> nextStep;
+
+        LoaderStep(Loader<TNextKey> nextStep) {
             this.nextStep = nextStep;
         }
+
         @Override
-        public void load(Properties sysProps) {
-            nextStep.load(Os.currentOs(sysProps));
+        public void load(TThisKey key) {
+            nextStep.load(loadThisStep(key));
         }
+
+        protected abstract TNextKey loadThisStep(TThisKey key);
+
+    }
+    static class OsLookup extends LoaderStep<Properties, Os>{
+        public OsLookup(Loader<Os> nextStep) {
+            super(nextStep);
+        }
+
+        @Override
+        protected Os loadThisStep(Properties properties) {
+            return Os.currentOs(properties);
+        }
+
     }
 
-    private class ResourcePathLookup implements Loader<Os>{
-        private final Loader<String> nextStep;
+    private static class ResourcePathLookup extends LoaderStep<Os, String>{
 
         public ResourcePathLookup(Loader<String> nextStep) {
-            this.nextStep = nextStep;
+            super(nextStep);
         }
+
         @Override
-        public void load(Os os) {
-            nextStep.load("/META-INF/linux64/libjcurses64.so");
+        protected String loadThisStep(Os os) {
+            return computeResourcePath(os);
+        }
+
+        private String computeResourcePath(Os os) {
+            switch (os){
+                case Windows32:
+                    return "/META-INF/windows32/libjcurses.dll";
+                case Windows64:
+                    return "/META-INF/windows64/libjcurses64.dll";
+                case Linux64:
+                    return "/META-INF/linux64/libjcurses64.so";
+                case Linux32:
+                    return noLibraryForOsOfType(os);
+                case Unknown:
+                    return noLibraryForOsOfType(os);
+                default:
+                    return noLibraryForOsOfType(os);
+            }
+        }
+
+        private String noLibraryForOsOfType(Os os) {
+            return "NO_PATH_FOR_OS_TYPE:" + os;
         }
     }
 
-    private class ResourceExtractor implements Loader<String>{
+    private static class ResourceExtractor implements Loader<String>{
         private final File extractionLocation;
         private final Loader<File> nextStep;
 
