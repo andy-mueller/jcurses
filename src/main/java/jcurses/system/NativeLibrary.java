@@ -1,15 +1,16 @@
 package jcurses.system;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class NativeLibrary {
 
     public static final String NO_LIB_FOR_PLATFORM_DEFINED = "NO_LIB_FOR_PLATFORM_DEFINED";
 
-    public NativeLibrary(Object loader, Properties sysProps) {
 
-    }
 
     public void load() {
         String libraryResourcePath = getLibraryResourcePathForPlatform();
@@ -90,4 +91,89 @@ public class NativeLibrary {
         }
     }
 
+    interface Loader<TKey> {
+        void load(TKey key);
+    }
+
+    static abstract class LoaderStep<TThisKey, TNextKey> implements Loader<TThisKey> {
+        private final Loader<TNextKey> nextStep;
+
+        LoaderStep(Loader<TNextKey> nextStep) {
+            this.nextStep = nextStep;
+        }
+
+        @Override
+        public void load(TThisKey key) {
+            nextStep.load(loadThisStep(key));
+        }
+
+        protected abstract TNextKey loadThisStep(TThisKey key);
+
+    }
+
+    static class OsLookup extends LoaderStep<Properties, Os> {
+        public OsLookup(Loader<Os> nextStep) {
+            super(nextStep);
+        }
+
+        @Override
+        protected Os loadThisStep(Properties properties) {
+            return Os.currentOs(properties);
+        }
+
+    }
+
+    static class ResourcePathLookup extends LoaderStep<Os, String> {
+
+        public ResourcePathLookup(Loader<String> nextStep) {
+            super(nextStep);
+        }
+
+        @Override
+        protected String loadThisStep(Os os) {
+            return computeResourcePath(os);
+        }
+
+        private String computeResourcePath(Os os) {
+            switch (os) {
+                case Windows32:
+                    return "/META-INF/windows32/libjcurses.dll";
+                case Windows64:
+                    return "/META-INF/windows64/libjcurses64.dll";
+                case Linux64:
+                    return "/META-INF/linux64/libjcurses64.so";
+                case Linux32:
+                    return noLibraryForOsOfType(os);
+                case Unknown:
+                    return noLibraryForOsOfType(os);
+                default:
+                    return noLibraryForOsOfType(os);
+            }
+        }
+
+        private String noLibraryForOsOfType(Os os) {
+            return "NO_PATH_FOR_OS_TYPE:" + os;
+        }
+    }
+
+    static class ResourceExtractor extends LoaderStep<String, File> {
+        private final File extractionLocation;
+
+
+        public ResourceExtractor(File extractionLocation, Loader<File> nextStep) {
+            super(nextStep);
+            this.extractionLocation = extractionLocation;
+        }
+
+
+        @Override
+        protected File loadThisStep(String resourcePath) {
+            String fileName = computeFileNameFromResourcePath(resourcePath);
+            return new File(extractionLocation, fileName);
+        }
+
+        private String computeFileNameFromResourcePath(String resourcePath) {
+            return resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+        }
+    }
 }
