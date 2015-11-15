@@ -11,7 +11,6 @@ public class NativeLibrary {
     public static final String NO_LIB_FOR_PLATFORM_DEFINED = "NO_LIB_FOR_PLATFORM_DEFINED";
 
 
-
     public void load() {
         String libraryResourcePath = getLibraryResourcePathForPlatform();
         if (NO_LIB_FOR_PLATFORM_DEFINED.equals(libraryResourcePath)) {
@@ -66,7 +65,7 @@ public class NativeLibrary {
     }
 
     private static String getLibraryResourcePathForPlatform() {
-        switch (Os.currentOs()){
+        switch (Os.currentOs()) {
 
             case Unknown:
                 return NO_LIB_FOR_PLATFORM_DEFINED;
@@ -157,11 +156,13 @@ public class NativeLibrary {
     }
 
     static class ResourceExtractor extends LoaderStep<String, File> {
+        private final Extractor extractor;
         private final File extractionLocation;
 
 
-        public ResourceExtractor(File extractionLocation, Loader<File> nextStep) {
+        public ResourceExtractor(Extractor extractor, File extractionLocation, Loader<File> nextStep) {
             super(nextStep);
+            this.extractor = extractor;
             this.extractionLocation = extractionLocation;
         }
 
@@ -169,11 +170,18 @@ public class NativeLibrary {
         @Override
         protected File loadThisStep(String resourcePath) {
             String fileName = computeFileNameFromResourcePath(resourcePath);
+            InputStream resourceStream = getClass().getResourceAsStream(resourcePath);
+            extractor.extract(resourceStream);
             return new File(extractionLocation, fileName);
         }
 
         private String computeFileNameFromResourcePath(String resourcePath) {
             return resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+        }
+
+        public static class Extractor {
+            public void extract(InputStream content) {
+            }
         }
     }
 }
