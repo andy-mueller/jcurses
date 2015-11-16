@@ -4,7 +4,6 @@ package jcurses.system;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.UUID;
 
 import static com.crudetech.matcher.EqualsInputStream.withContent;
 import static com.crudetech.matcher.FileDoesExistMatcher.doesExist;
@@ -23,21 +22,21 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
     @Test
     public void givenResourcePath_ExtractedResourceFileIsPassedOn() throws Exception {
         NativeLibrary.Loader<File> nextStep = mockLoader();
-        File extractionLocation = tempDir();
+        File extractionLocation = TempFolder.tempDir();
         NativeLibrary.ResourceExtractor.Extractor extractor =
                 mock(NativeLibrary.ResourceExtractor.Extractor.class);
         NativeLibrary.ResourceExtractor resourceExtractor = new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
 
         resourceExtractor.load("/jcurses/test/afile.txt");
 
-        File expectedFile = tempFile("afile.txt");
+        File expectedFile = TempFolder.tempFile("afile.txt");
         verify(nextStep).load(expectedFile);
     }
 
     @Test
     public void givenResourcePath_ResourceStreamIsOpened() throws Exception {
         NativeLibrary.Loader<File> nextStep = mockLoader();
-        File extractionLocation = tempDir();
+        File extractionLocation = TempFolder.tempDir();
         NativeLibrary.ResourceExtractor.Extractor extractor =
                 mock(NativeLibrary.ResourceExtractor.Extractor.class);
         NativeLibrary.ResourceExtractor resourceExtractor =
@@ -51,7 +50,7 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
 
     @Test
     public void givenStreamAndDestination_FileIsWritten() throws Exception {
-        File destination = tempFile();
+        File destination = TempFolder.tempFile();
         NativeLibrary.ResourceExtractor.Extractor extractor =
                 new NativeLibrary.ResourceExtractor.Extractor();
 
@@ -69,17 +68,5 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
         }
     }
 
-
-    private File tempDir() {
-        return new File(System.getProperty("java.io.tmpdir"));
-    }
-
-    private File tempFile(String fileName) {
-        return new File(System.getProperty("java.io.tmpdir"), fileName);
-    }
-
-    private File tempFile() {
-        return tempFile(UUID.randomUUID().toString());
-    }
 
 }
