@@ -1,9 +1,6 @@
 package jcurses.system;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class NativeLibrary {
@@ -171,7 +168,7 @@ public class NativeLibrary {
         protected File loadThisStep(String resourcePath) {
             String fileName = computeFileNameFromResourcePath(resourcePath);
             InputStream resourceStream = getClass().getResourceAsStream(resourcePath);
-            extractor.extract(resourceStream);
+            extractor.extract(resourceStream, extractionLocation);
             return new File(extractionLocation, fileName);
         }
 
@@ -180,7 +177,22 @@ public class NativeLibrary {
         }
 
         public static class Extractor {
-            public void extract(InputStream content) {
+            public void extract(InputStream content, File destination) {
+                try {
+                    doExtract(content, destination);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            private void doExtract(InputStream content, File destination) throws IOException {
+                try (FileOutputStream fos = new FileOutputStream(destination)) {
+                    byte[] buffy = new byte[1024];
+                    int read = 0;
+                    while ((read = content.read(buffy)) >= 0) {
+                        fos.write(buffy, 0, read);
+                    }
+                }
             }
         }
     }

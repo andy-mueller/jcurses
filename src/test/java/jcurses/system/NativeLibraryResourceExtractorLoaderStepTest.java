@@ -1,13 +1,16 @@
 package jcurses.system;
 
 
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.UUID;
 
-import static org.mockito.Matchers.argThat;
+import static com.crudetech.matcher.EqualsInputStream.withContent;
+import static com.crudetech.matcher.FileDoesExistMatcher.doesExist;
+import static com.crudetech.matcher.FileHasContent.hasContent;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -22,7 +25,7 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
         NativeLibrary.Loader<File> nextStep = mockLoader();
         File extractionLocation = tempDir();
         NativeLibrary.ResourceExtractor.Extractor extractor =
-                mock( NativeLibrary.ResourceExtractor.Extractor.class);
+                mock(NativeLibrary.ResourceExtractor.Extractor.class);
         NativeLibrary.ResourceExtractor resourceExtractor = new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
 
         resourceExtractor.load("/jcurses/test/afile.txt");
@@ -30,72 +33,42 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
         File expectedFile = tempFile("afile.txt");
         verify(nextStep).load(expectedFile);
     }
+
     @Test
     public void givenResourcePath_ResourceStreamIsOpened() throws Exception {
         NativeLibrary.Loader<File> nextStep = mockLoader();
         File extractionLocation = tempDir();
         NativeLibrary.ResourceExtractor.Extractor extractor =
-                mock( NativeLibrary.ResourceExtractor.Extractor.class);
+                mock(NativeLibrary.ResourceExtractor.Extractor.class);
         NativeLibrary.ResourceExtractor resourceExtractor =
                 new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
 
         resourceExtractor.load("/jcurses/test/afile.txt");
 
 
-        verify(extractor).extract(withContent("some data"));
+        verify(extractor).extract(withContent("some data"), eq(extractionLocation));
     }
 
-    private InputStream withContent(String content) {
-        return argThat(new EqualsInputStream(content));
+    @Test
+    public void givenStreamAndDestination_FileIsWritten() throws Exception {
+        File destination = tempFile();
+        NativeLibrary.ResourceExtractor.Extractor extractor =
+                new NativeLibrary.ResourceExtractor.Extractor();
+
+        InputStream stream = new StringInputStream("some text");
+        extractor.extract(stream, destination);
+
+        assertThat(destination, doesExist());
+        assertThat(destination, hasContent("some text"));
     }
 
-    private static abstract class MemoizingTypeSafeDiagnosingMatcher<T> extends TypeSafeDiagnosingMatcher<T>{
-        private Boolean memo = null;
-        @Override
-        protected boolean matchesSafely(T item, Description mismatchDescription) {
-            if(memo == null){
-                memo = doMatchSafely(item);
-            }
-            if(!memo){
-                doDescribeMismatch(item, mismatchDescription);
-            }
-            return memo;
-        }
 
-        protected void doDescribeMismatch(T item, Description mismatchDescription) {
-            mismatchDescription.appendText(" was ").appendValue(item);
-        }
-        protected abstract boolean doMatchSafely(T item);
-    }
-
-    private class EqualsInputStream extends MemoizingTypeSafeDiagnosingMatcher<InputStream> {
-        private final String content;
-
-        public EqualsInputStream(String content) {
-            this.content = content;
-        }
-
-        @Override
-        protected boolean doMatchSafely(InputStream inputStream) {
-            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-            String actualContent = readContentFrom(r);
-            return content.equals(actualContent);
-        }
-
-        private String readContentFrom(BufferedReader r) {
-            try {
-                return r.readLine();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendText(content);
-
+    private static class StringInputStream extends ByteArrayInputStream {
+        public StringInputStream(String content) throws UnsupportedEncodingException {
+            super(content.getBytes("UTF-8"));
         }
     }
+
 
     private File tempDir() {
         return new File(System.getProperty("java.io.tmpdir"));
@@ -105,5 +78,8 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
         return new File(System.getProperty("java.io.tmpdir"), fileName);
     }
 
+    private File tempFile() {
+        return tempFile(UUID.randomUUID().toString());
+    }
 
 }
