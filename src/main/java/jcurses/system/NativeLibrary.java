@@ -5,13 +5,14 @@ import java.util.Properties;
 
 public class NativeLibrary {
     static public void load() {
-        Loader<Properties> loaderChain = new OsLookup(
-                new ResourcePathLookup(
-                        new ResourceExtractor(computeLibraryExtractionLocation(),
-                                new SharedObjectLoader()
+        Loader<Properties> loaderChain =
+                new OsLookup(
+                        new ResourcePathLookup(
+                                new ResourceExtractor(computeLibraryExtractionLocation(),
+                                        new SharedObjectLoader()
                                 )
-                )
-        );
+                        )
+                );
 
         loaderChain.load(System.getProperties());
     }
@@ -97,6 +98,7 @@ public class NativeLibrary {
             this.extractor = extractor;
             this.extractionLocation = extractionLocation;
         }
+
         public ResourceExtractor(File extractionLocation, Loader<File> nextStep) {
             this(new Extractor(), extractionLocation, nextStep);
         }
@@ -136,14 +138,17 @@ public class NativeLibrary {
         }
     }
 
-    static class SharedObjectLoader implements Loader<File>{
+    static class SharedObjectLoader implements Loader<File> {
         private final Runtime runtime;
+
         public SharedObjectLoader(Runtime runtime) {
             this.runtime = runtime;
         }
+
         public SharedObjectLoader() {
             this(Runtime.getRuntime());
         }
+
         @Override
         public void load(File pathToSharedObject) {
             runtime.load(pathToSharedObject.getAbsolutePath());
