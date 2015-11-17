@@ -9,6 +9,7 @@ import static com.crudetech.matcher.EqualsInputStream.withContent;
 import static com.crudetech.matcher.FileDoesExistMatcher.doesExist;
 import static com.crudetech.matcher.FileHasContent.hasContent;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -25,7 +26,8 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
         File extractionLocation = TempFolder.tempDir();
         NativeLibrary.ResourceExtractor.Extractor extractor =
                 mock(NativeLibrary.ResourceExtractor.Extractor.class);
-        NativeLibrary.ResourceExtractor resourceExtractor = new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
+        NativeLibrary.ResourceExtractor resourceExtractor =
+                new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
 
         resourceExtractor.load("/jcurses/test/afile.txt");
 
@@ -44,8 +46,20 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
 
         resourceExtractor.load("/jcurses/test/afile.txt");
 
+        verify(extractor).extract(withContent("some data"), any(File.class));
+    }
+    @Test
+    public void givenResourcePath_DestinationPathIsConstructed() throws Exception {
+        NativeLibrary.Loader<File> nextStep = mockLoader();
+        File extractionLocation = TempFolder.tempDir();
+        NativeLibrary.ResourceExtractor.Extractor extractor =
+                mock(NativeLibrary.ResourceExtractor.Extractor.class);
+        NativeLibrary.ResourceExtractor resourceExtractor =
+                new NativeLibrary.ResourceExtractor(extractor, extractionLocation, nextStep);
 
-        verify(extractor).extract(withContent("some data"), eq(extractionLocation));
+        resourceExtractor.load("/jcurses/test/afile.txt");
+
+        verify(extractor).extract(any(InputStream.class), eq(TempFolder.tempFile("afile.txt")));
     }
 
     @Test

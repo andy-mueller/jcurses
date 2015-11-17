@@ -5,7 +5,7 @@ import java.util.Properties;
 
 public class NativeLibrary {
 
-    public void load() {
+    static public void load() {
         Loader<Properties> loaderChain = new OsLookup(
                 new ResourcePathLookup(
                         new ResourceExtractor(computeLibraryExtractionLocation(),
@@ -76,9 +76,8 @@ public class NativeLibrary {
                 case Linux64:
                     return "/META-INF/linux64/libjcurses64.so";
                 case Linux32:
-                    return noLibraryForOsOfType(os);
+                    return "/META-INF/linux32/libjcurses.so";
                 case Unknown:
-                    return noLibraryForOsOfType(os);
                 default:
                     return noLibraryForOsOfType(os);
             }
@@ -106,10 +105,11 @@ public class NativeLibrary {
 
         @Override
         protected File loadThisStep(String resourcePath) {
-            String fileName = computeFileNameFromResourcePath(resourcePath);
-            InputStream resourceStream = getClass().getResourceAsStream(resourcePath);
-            extractor.extract(resourceStream, extractionLocation);
-            return new File(extractionLocation, fileName);
+            final String fileName = computeFileNameFromResourcePath(resourcePath);
+            final InputStream resourceStream = getClass().getResourceAsStream(resourcePath);
+            final File destinationFile = new File(extractionLocation, fileName);
+            extractor.extract(resourceStream, destinationFile);
+            return destinationFile;
         }
 
         private String computeFileNameFromResourcePath(String resourcePath) {

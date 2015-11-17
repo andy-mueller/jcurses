@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 
 public class NativeLibraryOsLookupLoaderStepTest {
     @Test
-    public void givenPropertiesForLinux_OsIsLookedUp() throws Exception {
+    public void givenPropertiesForLinux64_OsIsLookedUp() throws Exception {
         Properties sysProps = new Properties();
         sysProps.setProperty("os.name", "Os w/ Linux in name");
         sysProps.setProperty("os.arch", "amd64");
@@ -23,7 +23,7 @@ public class NativeLibraryOsLookupLoaderStepTest {
     }
 
     @Test
-    public void givenPropertiesForWin_OsIsLookedUp() throws Exception {
+    public void givenPropertiesForWin64_OsIsLookedUp() throws Exception {
         Properties sysProps = new Properties();
         sysProps.setProperty("os.name", "Os w/ Windows in name");
         sysProps.setProperty("os.arch", "amd64");

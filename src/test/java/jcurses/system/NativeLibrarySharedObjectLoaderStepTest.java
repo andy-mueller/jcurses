@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 
 public class NativeLibrarySharedObjectLoaderStepTest {
     @Test
-    public void xox() throws Exception {
+    public void givenPathToSharedObject_RuntimeIsUsedToLoadIt() throws Exception {
         Runtime rt = mock(Runtime.class);
         NativeLibrary.SharedObjectLoader loader =
                 new NativeLibrary.SharedObjectLoader(rt);
@@ -20,9 +20,4 @@ public class NativeLibrarySharedObjectLoaderStepTest {
 
         verify(rt).load(pathToSharedObject.getAbsolutePath());
     }
-    @SuppressWarnings("unchecked")
-    private <T> NativeLibrary.Loader<T> mockLoader() {
-        return mock(NativeLibrary.Loader.class);
-    }
-
 }
