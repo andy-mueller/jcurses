@@ -5,78 +5,16 @@ import java.util.Properties;
 
 public class NativeLibrary {
 
-    public static final String NO_LIB_FOR_PLATFORM_DEFINED = "NO_LIB_FOR_PLATFORM_DEFINED";
-
-
     public void load() {
-        String libraryResourcePath = getLibraryResourcePathForPlatform();
-        if (NO_LIB_FOR_PLATFORM_DEFINED.equals(libraryResourcePath)) {
-            raiseNoLibraryPackagedError();
-        }
+        Loader<Properties> loaderChain = new OsLookup(
+                new ResourcePathLookup(
+                        new ResourceExtractor(computeLibraryExtractionLocation(),
+                                new SharedObjectLoader()
+                                )
+                )
+        );
 
-        File libraryExtractionLocation = computeLibraryExtractionLocation();
-        File extractedLibrary = extractLibraryFromResourcesToDisc(libraryResourcePath, libraryExtractionLocation);
-
-        if (extractedLibrary != null) {
-            System.load(extractedLibrary.getAbsolutePath());
-            return;
-        }
-
-        System.loadLibrary("jcurses");
-    }
-
-    private static void raiseNoLibraryPackagedError() {
-        throw new RuntimeException("There is native library for your OS packaged w/ this library");
-    }
-
-    private static File extractLibraryFromResourcesToDisc(String libraryResourcePath, File dir) {
-        InputStream nativeLibraryContent = NativeLibrary.class.getResourceAsStream(libraryResourcePath);
-
-        if (nativeLibraryContent == null) {
-            System.err.println("no native library for platform '" + libraryResourcePath + "'");
-            return null;
-        }
-
-        String libraryFileName = libraryResourcePath.substring(libraryResourcePath.lastIndexOf('/'));
-        try {
-            return streamToFile(dir, nativeLibraryContent, libraryFileName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static File streamToFile(File dir, InputStream is, String libraryFileName) throws IOException {
-        File f = new File(dir, libraryFileName);
-        if (!f.exists()) {
-
-
-            try (FileOutputStream fos = new FileOutputStream(f)) {
-                byte[] buffy = new byte[1024];
-                int read = 0;
-                while ((read = is.read(buffy)) >= 0) {
-                    fos.write(buffy, 0, read);
-                }
-            }
-        }
-        return f;
-    }
-
-    private static String getLibraryResourcePathForPlatform() {
-        switch (Os.currentOs()) {
-
-            case Unknown:
-                return NO_LIB_FOR_PLATFORM_DEFINED;
-            case Windows32:
-                return "/META-INF/windows32/libjcurses.dll";
-            case Windows64:
-                return "/META-INF/windows64/libjcurses64.dll";
-            case Linux64:
-                return "/META-INF/linux64/libjcurses64.so";
-            case Linux32:
-                return "/META-INF/linux32/libjcurses.so";
-            default:
-                return NO_LIB_FOR_PLATFORM_DEFINED;
-        }
+        loaderChain.load(System.getProperties());
     }
 
     private static File computeLibraryExtractionLocation() {
@@ -120,7 +58,6 @@ public class NativeLibrary {
     }
 
     static class ResourcePathLookup extends LoaderStep<Os, String> {
-
         public ResourcePathLookup(Loader<String> nextStep) {
             super(nextStep);
         }
@@ -162,6 +99,9 @@ public class NativeLibrary {
             this.extractor = extractor;
             this.extractionLocation = extractionLocation;
         }
+        public ResourceExtractor(File extractionLocation, Loader<File> nextStep) {
+            this(new Extractor(), extractionLocation, nextStep);
+        }
 
 
         @Override
@@ -176,7 +116,7 @@ public class NativeLibrary {
             return resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
         }
 
-        public static class Extractor {
+        static class Extractor {
             public void extract(InputStream content, File destination) {
                 try {
                     doExtract(content, destination);
@@ -187,13 +127,27 @@ public class NativeLibrary {
 
             private void doExtract(InputStream content, File destination) throws IOException {
                 try (FileOutputStream fos = new FileOutputStream(destination)) {
-                    byte[] buffy = new byte[1024];
-                    int read = 0;
-                    while ((read = content.read(buffy)) >= 0) {
-                        fos.write(buffy, 0, read);
+                    byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = content.read(buffer)) >= 0) {
+                        fos.write(buffer, 0, read);
                     }
                 }
             }
+        }
+    }
+
+    static class SharedObjectLoader implements Loader<File>{
+        private final Runtime runtime;
+        public SharedObjectLoader(Runtime runtime) {
+            this.runtime = runtime;
+        }
+        public SharedObjectLoader() {
+            this(Runtime.getRuntime());
+        }
+        @Override
+        public void load(File pathToSharedObject) {
+            runtime.load(pathToSharedObject.getAbsolutePath());
         }
     }
 }

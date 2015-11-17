@@ -7,11 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class NativeLibraryResourcePathLookupLoaderStepTest {
-    @SuppressWarnings("unchecked")
-    private <T> NativeLibrary.Loader<T> mockLoader() {
-        return mock(NativeLibrary.Loader.class);
-    }
-
     @Test
     public void givenOs_ResourcePathIsMapped() throws Exception {
         NativeLibrary.Loader<String> nextStep = mockLoader();
@@ -41,5 +36,8 @@ public class NativeLibraryResourcePathLookupLoaderStepTest {
 
         verify(nextStep).load("/META-INF/windows64/libjcurses64.dll");
     }
-
+    @SuppressWarnings("unchecked")
+    private <T> NativeLibrary.Loader<T> mockLoader() {
+        return mock(NativeLibrary.Loader.class);
+    }
 }
