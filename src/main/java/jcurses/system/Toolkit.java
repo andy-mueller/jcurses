@@ -32,7 +32,7 @@ public class Toolkit {
 	private static short [] [] __colorpairs = new short [8] [8];
 
 	static {
-//		NativeLibrary.load();
+		NativeLibrary.load();
 		fillBasicColors(__basicColors);
 		fillAttributes(__attributes);
 		fillColorPairs();

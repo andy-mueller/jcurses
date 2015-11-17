@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Properties;
 
 public class NativeLibrary {
-
     static public void load() {
         Loader<Properties> loaderChain = new OsLookup(
                 new ResourcePathLookup(
