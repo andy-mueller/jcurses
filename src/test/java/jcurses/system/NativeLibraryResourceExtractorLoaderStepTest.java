@@ -15,11 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class NativeLibraryResourceExtractorLoaderStepTest {
-    @SuppressWarnings("unchecked")
-    private <T> NativeLibrary.Loader<T> mockLoader() {
-        return mock(NativeLibrary.Loader.class);
-    }
-
     @Test
     public void givenResourcePath_ExtractedResourceFileIsPassedOn() throws Exception {
         NativeLibrary.Loader<File> nextStep = mockLoader();
@@ -81,6 +76,8 @@ public class NativeLibraryResourceExtractorLoaderStepTest {
             super(content.getBytes("UTF-8"));
         }
     }
-
-
+    @SuppressWarnings("unchecked")
+    private <T> NativeLibrary.Loader<T> mockLoader() {
+        return mock(NativeLibrary.Loader.class);
+    }
 }
