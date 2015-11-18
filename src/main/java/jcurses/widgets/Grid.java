@@ -46,7 +46,7 @@ public class Grid {
 	 * @param y Column index of top-left grid
 	 * @param width Number of columns 
 	 * @param height Number of rows
-	 * @return
+	 * @return see above
 	 */
 	Rectangle getRectangle(int x, int y, int width, int height) {
 		return new Rectangle(getWidth(_widths, 0,x), getWidth(_heights, 0,y), getWidth(_widths, x,x+width), 

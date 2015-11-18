@@ -50,8 +50,8 @@ public class CharColor {
 	 * 
 	 * @param background background color
 	 * @param foreground foreground color
-	 * @param black-white mode attribute
-	 * @param color mode attribute
+	 * @param blackWhiteAttribute black-white mode attribute
+	 * @param colorAttribute mode attribute
 	 */
 	public  CharColor(short background, short foreground, short blackWhiteAttribute, short colorAttribute) {
 		verifyColor(background);
@@ -70,7 +70,7 @@ public class CharColor {
 	 * 
 	 * @param background background color
 	 * @param foreground foreground color
-	 * @param black-white mode attribute
+	 * @param blackWhiteAttribute black-white mode attribute
 	 * color mode attribute will be set to <code>NORMAL</code>
 	 */
 	public  CharColor(short background, short foreground, short blackWhiteAttribute) {

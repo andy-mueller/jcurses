@@ -71,7 +71,7 @@ public class Paging {
 	/**
 	* The method returns the start index for the given page
 	* 
-	* @param the number of the page to calculate start index
+	* @param pageNumber number of the page to calculate start index
 	* @return start index
 	* 
 	*/
@@ -85,7 +85,7 @@ public class Paging {
    /**
 	* The method returns the end index for the given page
 	* 
-	* @param the number of the page to calculate end index
+	* @param pageNumber the number of the page to calculate end index
 	* @return start index
 	* 
 	*/
@@ -99,7 +99,7 @@ public class Paging {
    /**
 	* The method returns the page offset for the given index
 	* 
-	* @param the index to calculate the page offset
+	* @param index the index to calculate the page offset
 	* @return start index
 	* 
 	*/
@@ -113,7 +113,7 @@ public class Paging {
    * The method returns an index for the given page offset of the given page
    * The extra handling for the last by one page
    * @param pageNumber pageNumber
-   * @param offset page offset
+   * @param pageOffset offset page offset
    * @return index
    * 
    */

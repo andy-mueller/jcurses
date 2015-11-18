@@ -1,12 +1,20 @@
-package jcurses.system;
-
-/**
- * The instances of this class represent characters or key codes,
- * that are input by an user. An instance of the class contains 
- * einther a ascii character or one of in the class declared constants 
- * for function keys and control keys. 
+package jcurses.system;
+
+
+
+/**
+
+ * The instances of this class represent characters or key codes,
+
+ * that are input by an user. An instance of the class contains 
+
+ * einther a ascii character or one of in the class declared constants 
+
+ * for function keys and control keys. 
+
  */
-public class InputChar {
+public class InputChar {
+
 	public static final int KEY_DOWN        = Toolkit.getSpecialKeyCode(0402);            	/* Down-arrow */
 	public static final int KEY_UP          = Toolkit.getSpecialKeyCode(0403);				/* Up-arrow */
 	public static final int KEY_LEFT        = Toolkit.getSpecialKeyCode(0404);				/* Left-arrow */
@@ -30,21 +38,27 @@ public class InputChar {
 	public static final int KEY_NPAGE       = Toolkit.getSpecialKeyCode(0522);            	/* Next page */
 	public static final int KEY_PPAGE       = Toolkit.getSpecialKeyCode(0523);            	/* Previous page */
 	public static final int KEY_PRINT       = Toolkit.getSpecialKeyCode(0532);            	/* Print */
-	public static final int KEY_END			= Toolkit.getSpecialKeyCode(0550);		      	/* End */    
-	private int _code = -1;
-	private String _string = null;
-	private static byte [] __bytes  = new byte [1];
+	public static final int KEY_END			= Toolkit.getSpecialKeyCode(0550);		      	/* End */    
+
+	private int _code = -1;
+
+	private String _string = null;
+
+	private static byte [] __bytes  = new byte [1];
+
 	/**
 	 *  The constructor
 	 * 
 	 * @param code the code of input char
 	 */
-	public InputChar(int code) {
+	public InputChar(int code) {
+
 		_code = code;
 		if (_code <= 0xff) {
 			_string = convertByteToString(_code);
 		}
-	}
+	}
+
 	/**
 	 *  The constructor
 	 * 
@@ -53,7 +67,8 @@ public class InputChar {
 	public InputChar (char character) {
 		_string = ""+character;
 		_code = _string.getBytes()[0];
-	}
+	}
+
 	/**
 	 *   The return value of this method tells, whether the instance contains a control code
 	 *   or an ascii character.
@@ -62,8 +77,10 @@ public class InputChar {
 	 */
 	public boolean isSpecialCode() {
 		return (_code>0xff);
-	}
-	private static synchronized String convertByteToString(int code) {
+	}
+
+	private static synchronized String convertByteToString(int code) {
+
 		__bytes [0] = (byte)code;
 		String result = null;
 		String encoding = Toolkit.getEncoding();
@@ -78,7 +95,8 @@ public class InputChar {
 			}
 		}
 		return result;
-	}
+	}
+
 	/**
 	 *  The method returns the character, contained in this object.
 	 * 
@@ -90,32 +108,37 @@ public class InputChar {
 			throw new RuntimeException("this is a special key");
 		}
 		return _string.charAt(0);
-	}
+	}
+
 	/**
-	 *  @returns the string representation of the object
+	 *  @return the string representation of the object
 	 */
 	public String toString() {
 		return _string;
-	}
+	}
+
 	/**
 	 *  @return the code ( ascii or control), contained in this instance
 	 */
 	public int getCode() {
 		return _code;
-	}
+	}
+
 	/**
 	 *  Two instances of this class are equal, if they contain same codes.
 	 * 
 	 * @param obj the object to compare
 	 * @return <code>true</code>, if this instance equal to <code>obj</code>, false otherwise
 	 */
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) {
+
 		if (!(obj instanceof InputChar)) {
 			return false;
 		}
 		InputChar character2 = (InputChar)obj;
 		return (_code == character2.getCode());
-	}
+	}
+
 	/**
 	 *  The method needed to make it possible to use instances of this class as keys for 
 	 *  <code>java.util.Hashtable</code>
@@ -125,4 +148,5 @@ public class InputChar {
 	public int hashCode() {
 		return _code;
 	}
-}
+}
+

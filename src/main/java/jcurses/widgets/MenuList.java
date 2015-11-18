@@ -31,8 +31,7 @@ public class MenuList extends List {
     /**
     * Adds a separator at the end of the list
     * 
-    * @param index position to add a separator
-    * 
+    *
     */
 	public void addSeparator() {
 		addSeparator(getItemsCount());

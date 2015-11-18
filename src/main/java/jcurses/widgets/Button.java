@@ -110,7 +110,7 @@ public class Button extends Widget {
 	/**
 	*  The constructor
     * 
-    * @param button's label
+    * @param label button's label
 	*/
 	public Button(String label) {
 	  _label = label;

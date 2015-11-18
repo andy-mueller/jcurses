@@ -37,7 +37,6 @@ public class Panel extends WidgetContainer {
     * @param height preferred height, if -1 is passed , no height is preferred, so
     * the width of the panel depends only on the layout manager of the parent container
     * or on the window width, if this is a root panel.
-    * @param height 
     */
 	public Panel(int width, int height) {
 		_prefSize = new Rectangle(width, height);	

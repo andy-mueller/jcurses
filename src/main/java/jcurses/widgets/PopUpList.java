@@ -45,7 +45,7 @@ public class PopUpList extends Widget {
 	
 	
     /**
-	*  @raturn colors used to paint the widget, if it has focus
+	*  @return colors used to paint the widget, if it has focus
     * 
 	*/
 	public CharColor getFocusedPopUpColors() {

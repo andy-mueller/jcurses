@@ -16,7 +16,7 @@ public class CheckBox extends ToggleButton {
 	/**
 	 *  The constructor.
 	 * 
-	 * @param checked true, if the checkbox is checked at first time, false otherwise
+	 * @param selected checked true, if the checkbox is checked at first time, false otherwise
 	 */
 	public CheckBox(boolean selected) {
 		this._selected = selected;

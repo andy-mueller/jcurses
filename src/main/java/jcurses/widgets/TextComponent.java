@@ -43,7 +43,7 @@ public class TextComponent extends Widget {
 	 *  @param height the preferred height of the component. If -1 is stated,
 	 * there is no preferred width and the component is layouted dependend on the
 	 * container.
-	 * @text the initial text, if <code>null<code> the component is empty
+	 * @param  text the initial text, if <code>null<code> the component is empty
 	 * 
 	 */
 

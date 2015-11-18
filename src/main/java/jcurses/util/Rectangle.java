@@ -205,8 +205,8 @@ public class Rectangle {
     /**
     *  The method veriifies, whether a point lies within this rectangle
     * 
-    * @param X  x coordinate of the point, whose containment is to verify
-    * @param Y  y coordinate of the point, whose containment is to verify
+    * @param x  x coordinate of the point, whose containment is to verify
+    * @param y  y coordinate of the point, whose containment is to verify
 	*  @return <code>true</code> if the point is withhin this rectangle in other case <code>false</code>
 	*/
 	public boolean inside(int x, int y) {

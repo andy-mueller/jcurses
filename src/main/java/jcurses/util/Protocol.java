@@ -69,7 +69,7 @@ public class Protocol {
 	
     /** 
     *  The method activates a channel with given name
-    * @param the name of the channel to activate
+    * @param channel the name of the channel to activate
     */
 	public static void activateChannel(String channel) {
 		__activatedChannels.add(channel);
@@ -79,7 +79,7 @@ public class Protocol {
     /**
     *  The method writes a log message
     * @param message the messsage's text
-    * @param name of the channel to write on.
+    * @param channel name of the channel to write on.
     */
 	public static void log(String message, String channel) {
 		if (isLoggingActivated() && isChannelActivated(channel)) {

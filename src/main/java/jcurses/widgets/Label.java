@@ -67,8 +67,7 @@ public class Label extends Widget {
 	
 	/**
 	 * Get label
-	 * @param label
-	 * @return
+	 * @return The label
 	 */
 	public String getLabel() {
 		return this._label;

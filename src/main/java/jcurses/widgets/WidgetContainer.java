@@ -21,7 +21,7 @@ public abstract class WidgetContainer extends Widget {
 	
 	
 	private Vector<Widget> _widgets = new Vector<Widget>();
-	private Hashtable<Widget, LayoutConstraint> _constraints = new Hashtable<Widget, LayoutConstraint>();
+	private Hashtable<Widget, LayoutConstraint> _constraints = new Hashtable<>();
 	
 	
 	/**
@@ -44,7 +44,7 @@ public abstract class WidgetContainer extends Widget {
 		
 		Toolkit.setClipRectangle(getChildsClippingRectangle());
 	  	for (int i=0; i<_widgets.size(); i++) {
-		    Widget widget = (Widget)_widgets.elementAt(i);
+		    Widget widget = _widgets.elementAt(i);
 		 	if (widget.isVisible()) widget.paint();
 	  	}
 		Toolkit.unsetClipRectangle();
@@ -105,7 +105,7 @@ public abstract class WidgetContainer extends Widget {
     * a widget to the container, a developer must use methods of container's layout manager.
     * 
     * @param widget widget to add
-    * @constraint layouting constraints
+    * @param constraint layouting constraints
 	*/
 	
 	protected void addWidget(Widget widget, LayoutConstraint constraint) {
