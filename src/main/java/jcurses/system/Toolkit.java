@@ -10,7 +10,7 @@ import java.awt.Point;
 /**
  *  This class is the 'work factory' of the jcurses library. It contains
  *  methods for primitive input and output operations and is only interface 
- *  to platform dependend libraries. An developer must not usually call methods of this 
+ *  to platform dependent libraries. An developer must not usually call methods of this
  * class, these are used implementing widgets and in jcurses core. 
  */
 public class Toolkit {
@@ -37,13 +37,12 @@ public class Toolkit {
 		fillAttributes(__attributes);
 		fillColorPairs();
 		initEncoding();
-		init();
 	}
 
 	private static Hashtable<Thread, ArrayList<Rectangle>> __clips = new Hashtable<>();
 
 	/**
-	 *  The method sets the clippping rectangle for the current thread.
+	 *  The method sets the clipping rectangle for the current thread.
 	 * All the output operations, that are performed by this thread after a call of this
 	 * method, will paint only within the clip rectangle. If other clips were set before this,
 	 * then the used clip rectangle is the intersection of all clip rectangles set by current thread.
