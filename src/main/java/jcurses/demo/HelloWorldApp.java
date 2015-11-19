@@ -49,7 +49,6 @@ public class HelloWorldApp {
         txt2.setCursorColors(new CharColor(CharColor.RED, CharColor.WHITE));
         mgr.addWidget(txt2, 1, 15, 12, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_CENTER);
 
-        window.pack();
         window.show();
 
         Toolkit.shutdown();

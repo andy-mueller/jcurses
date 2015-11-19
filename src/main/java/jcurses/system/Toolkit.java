@@ -37,6 +37,7 @@ public class Toolkit {
 		fillAttributes(__attributes);
 		fillColorPairs();
 		initEncoding();
+		init();
 	}
 
 	private static Hashtable<Thread, ArrayList<Rectangle>> __clips = new Hashtable<>();
