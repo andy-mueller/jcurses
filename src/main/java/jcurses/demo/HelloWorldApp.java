@@ -3,7 +3,6 @@ package jcurses.demo;
 import jcurses.event.ItemEvent;
 import jcurses.event.ItemListener;
 import jcurses.system.CharColor;
-import jcurses.system.Toolkit;
 import jcurses.widgets.*;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public class HelloWorldApp {
     }
 
     private int run(List<String> args) {
-        Toolkit.init();
         Window window = new Window(50, 30, true, "\"Hello, World!\" Application");
         DefaultLayoutManager mgr = new DefaultLayoutManager();
         mgr.bindToContainer(window.getRootPanel());
@@ -41,9 +39,9 @@ public class HelloWorldApp {
         });
         mgr.addWidget(menu, 0, 0, 50, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_LEFT);
 
-        TextArea txt = new TextArea(10, 1, "Example");
+        TextArea txt = new TextArea(15, 2, "Example");
         txt.setCursorColors(new CharColor(CharColor.RED, CharColor.WHITE));
-        mgr.addWidget(txt, 1, 5, 12, 5, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_CENTER);
+        mgr.addWidget(txt, 1, 5, 15, 5, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_CENTER);
 
         jcurses.widgets.TextField txt2 = new TextField(10, "edit me");
         txt2.setCursorColors(new CharColor(CharColor.RED, CharColor.WHITE));
@@ -51,7 +49,6 @@ public class HelloWorldApp {
 
         window.show();
 
-        Toolkit.shutdown();
         return 0;
     }
 }
