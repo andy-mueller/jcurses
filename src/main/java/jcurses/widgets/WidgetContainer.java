@@ -21,7 +21,7 @@ public abstract class WidgetContainer extends Widget {
 	
 	
 	private Vector<Widget> _widgets = new Vector<Widget>();
-	private Hashtable<Widget, LayoutConstraint> _constraints = new Hashtable<>();
+	private Hashtable<Widget, LayoutConstraint> _constraints = new Hashtable<Widget, LayoutConstraint>();
 	
 	
 	/**

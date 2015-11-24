@@ -5,8 +5,8 @@ import org.hamcrest.Matcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 public class FileHasContent extends MemoizingTypeSafeDiagnosingMatcher<File> {
@@ -36,7 +36,9 @@ public class FileHasContent extends MemoizingTypeSafeDiagnosingMatcher<File> {
     }
 
     private boolean match(File item) throws IOException {
-        byte[] bytes = Files.readAllBytes(item.toPath());
+        RandomAccessFile f = new RandomAccessFile(item, "r");
+        byte[] bytes = new byte[(int)f.length()];
+        f.readFully(bytes);
         return Arrays.equals(bytes, content.getBytes(encoding));
     }
 

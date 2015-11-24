@@ -26,7 +26,7 @@ public class HelloWorldApp {
     private int run(List<String> args) throws Exception {
         Window window = new MainWindow(50, 30);
         window.show();
-        Thread.sleep(5000L);
+        Thread.sleep(50000L);
         return 0;
     }
     static class MainWindow extends Window {

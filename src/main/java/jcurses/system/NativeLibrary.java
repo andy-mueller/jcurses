@@ -127,12 +127,15 @@ public class NativeLibrary {
             }
 
             private void doExtract(InputStream content, File destination) throws IOException {
-                try (FileOutputStream fos = new FileOutputStream(destination)) {
+                FileOutputStream fos = new FileOutputStream(destination);
+                try  {
                     byte[] buffer = new byte[1024];
                     int read;
                     while ((read = content.read(buffer)) >= 0) {
                         fos.write(buffer, 0, read);
                     }
+                }finally{
+                    fos.close();
                 }
             }
         }

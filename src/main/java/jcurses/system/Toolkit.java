@@ -40,7 +40,7 @@ public class Toolkit {
 		init();
 	}
 
-	private static Hashtable<Thread, ArrayList<Rectangle>> __clips = new Hashtable<>();
+	private static Hashtable<Thread, ArrayList<Rectangle>> __clips = new Hashtable<Thread, ArrayList<Rectangle>>();
 
 	/**
 	 *  The method sets the clipping rectangle for the current thread.
@@ -53,7 +53,7 @@ public class Toolkit {
 	public static void setClipRectangle(Rectangle clipRect) {
 		ArrayList<Rectangle> clips = __clips.get(Thread.currentThread());
 		if (clips == null) {
-			clips = new ArrayList<>();
+			clips = new ArrayList<Rectangle>();
 			__clips.put(Thread.currentThread(), clips);
 		}
 		clips.add(clipRect);
@@ -527,7 +527,7 @@ public class Toolkit {
 
 
 	private static List<String> getLines(String text, int maxWidth) {
-		ArrayList<String> list = new ArrayList<>();
+		ArrayList<String> list = new ArrayList<String>();
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0; i<text.length(); i++) {
 			char c = text.charAt(i);
