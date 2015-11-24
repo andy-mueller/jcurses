@@ -6,7 +6,7 @@ The project still misses native libraries for Mac OS and contributions would be 
 
 All projects were released under the LGPL, therefor this project is under the LGPL v2.
 
-# Summary of the original project
+## Summary of the original project
 
 Taken from the source forge web space:
 
