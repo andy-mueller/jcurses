@@ -1,6 +1,6 @@
 # jcurses
 
-This is a "fork" of the [jcurses](http://sourceforge.net/projects/javacurses/) project hosted on sourceforge. It is based on the last released 0.9.5b version. The source code was integrated into a maven project. It produces a jar file incorporating the required native libraries as resources. Thy will be extracted and loaded automatically, when the library is used. The mechanism was inspired by the jcurses fork of the [kolja project](https://github.com/codehaus/kolja/tree/master/jcurses). Additionally, some minor bug fixes were applied to the code base.
+This is a "fork" of the [jcurses](http://sourceforge.net/projects/javacurses/) project hosted on sourceforge. It is based on the last released 0.9.5b version. The source code was integrated into a maven project. It produces a jar file incorporating the required native libraries as resources. They will be extracted and loaded automatically, when the library is used. The mechanism was inspired by the jcurses fork of the [kolja project](https://github.com/codehaus/kolja/tree/master/jcurses). Additionally, some minor bug fixes were applied to the code base.
 
 The project still misses native libraries for Mac OS and contributions would be appreciated.
 
