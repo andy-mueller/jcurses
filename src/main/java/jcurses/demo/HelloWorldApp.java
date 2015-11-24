@@ -5,6 +5,7 @@ import jcurses.event.ItemListener;
 import jcurses.event.ValueChangedEvent;
 import jcurses.event.ValueChangedListener;
 import jcurses.system.CharColor;
+import jcurses.util.Message;
 import jcurses.widgets.*;
 
 import java.util.List;
@@ -35,27 +36,26 @@ public class HelloWorldApp {
         MainWindow(int x, int y) {
             super(x, y, true, "Tic Tac Toe");
             layoutManager = createLayoutManager();
-            this.textInput = new TextField();
+            this.textInput = new TextField(-1, "Initial Text");
             textInput.addListener(new ValueChangedListener() {
                 @Override
                 public void valueChanged(ValueChangedEvent event) {
                 }
             });
+            layoutManager.addWidget(textInput, 5, 5, 20, 4, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_LEFT);
             installMenu(layoutManager);
         }
 
 
         private void installMenu(DefaultLayoutManager layoutManager) {
-            final String NewEasyGame = "New Easy Game";
-            final String NewAdvancedGame = "New Advanced Game";
+            final String HelloWorldMenu = "Hello, World!";
             final String Exit = "Exit";
 
             MenuList menu = new MenuList();
-            menu.add(NewEasyGame);
-            menu.add(NewAdvancedGame);
+            menu.add(HelloWorldMenu);
             menu.add(Exit);
             menu.setSelectable(true);
-            menu.setTitle("Games");
+            menu.setTitle("A menu");
             menu.setTitleColors(new CharColor(menu.getTitleColors().getBackground(), CharColor.NORMAL));
             layoutManager.addWidget(menu, 0, 0, 50, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_LEFT);
             menu.addListener(new ItemListener() {
@@ -63,10 +63,8 @@ public class HelloWorldApp {
                 @Override
                 public void stateChanged(ItemEvent itemEvent) {
                     String item = (String) itemEvent.getItem();
-                    if (NewEasyGame.equalsIgnoreCase(item)) {
-                        onMnuNewEasyGame();
-                    } else if (NewAdvancedGame.equalsIgnoreCase(item)) {
-                        onMnuNewAdvancedGame();
+                    if (HelloWorldMenu.equalsIgnoreCase(item)) {
+                        onHelloWorld();
                     } else if (Exit.equalsIgnoreCase(item)) {
                     }
                 }
@@ -79,12 +77,9 @@ public class HelloWorldApp {
             return mgr;
         }
 
-        private void onMnuNewEasyGame() {
-
+        private void onHelloWorld() {
+            Message msgBox = new Message("A Message Box", "Hello, world!", "OK");
+            msgBox.show();
         }
-
-        private void onMnuNewAdvancedGame() {
-        }
-
     }
 }
