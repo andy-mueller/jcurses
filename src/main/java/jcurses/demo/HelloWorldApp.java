@@ -2,6 +2,8 @@ package jcurses.demo;
 
 import jcurses.event.ItemEvent;
 import jcurses.event.ItemListener;
+import jcurses.event.ValueChangedEvent;
+import jcurses.event.ValueChangedListener;
 import jcurses.system.CharColor;
 import jcurses.widgets.*;
 
@@ -15,40 +17,74 @@ import static java.util.Arrays.asList;
  * will trace out diagnostic messages.
  */
 public class HelloWorldApp {
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception{
         HelloWorldApp app = new HelloWorldApp();
         System.exit(app.run(asList(args)));
     }
 
-    private int run(List<String> args) {
-        Window window = new Window(50, 30, true, "\"Hello, World!\" Application");
-        DefaultLayoutManager mgr = new DefaultLayoutManager();
-        mgr.bindToContainer(window.getRootPanel());
-
-        MenuList menu = new MenuList();
-        menu.setTitle("File");
-        menu.add("Exit");
-        menu.setTitleColors(new CharColor(menu.getTitleColors().getBackground(), CharColor.NORMAL));
-        menu.addListener(new ItemListener() {
-            @Override
-            public void stateChanged(ItemEvent event) {
-                if("Exit".equalsIgnoreCase((String) event.getItem())){
-
-                }
-            }
-        });
-        mgr.addWidget(menu, 0, 0, 50, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_LEFT);
-
-        TextArea txt = new TextArea(15, 2, "Example");
-        txt.setCursorColors(new CharColor(CharColor.RED, CharColor.WHITE));
-        mgr.addWidget(txt, 1, 5, 15, 5, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_CENTER);
-
-        jcurses.widgets.TextField txt2 = new TextField(10, "edit me");
-        txt2.setCursorColors(new CharColor(CharColor.RED, CharColor.WHITE));
-        mgr.addWidget(txt2, 1, 15, 12, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_CENTER);
-
+    private int run(List<String> args) throws Exception {
+        Window window = new MainWindow(50, 30);
         window.show();
-
+        Thread.sleep(5000L);
         return 0;
+    }
+    static class MainWindow extends Window {
+        private final DefaultLayoutManager layoutManager;
+        private TextField textInput;
+
+        MainWindow(int x, int y) {
+            super(x, y, true, "Tic Tac Toe");
+            layoutManager = createLayoutManager();
+            this.textInput = new TextField();
+            textInput.addListener(new ValueChangedListener() {
+                @Override
+                public void valueChanged(ValueChangedEvent event) {
+                }
+            });
+            installMenu(layoutManager);
+        }
+
+
+        private void installMenu(DefaultLayoutManager layoutManager) {
+            final String NewEasyGame = "New Easy Game";
+            final String NewAdvancedGame = "New Advanced Game";
+            final String Exit = "Exit";
+
+            MenuList menu = new MenuList();
+            menu.add(NewEasyGame);
+            menu.add(NewAdvancedGame);
+            menu.add(Exit);
+            menu.setSelectable(true);
+            menu.setTitle("Games");
+            menu.setTitleColors(new CharColor(menu.getTitleColors().getBackground(), CharColor.NORMAL));
+            layoutManager.addWidget(menu, 0, 0, 50, 3, WidgetsConstants.ALIGNMENT_TOP, WidgetsConstants.ALIGNMENT_LEFT);
+            menu.addListener(new ItemListener() {
+                @SuppressWarnings({"CallToStringEqualsIgnoreCase"})
+                @Override
+                public void stateChanged(ItemEvent itemEvent) {
+                    String item = (String) itemEvent.getItem();
+                    if (NewEasyGame.equalsIgnoreCase(item)) {
+                        onMnuNewEasyGame();
+                    } else if (NewAdvancedGame.equalsIgnoreCase(item)) {
+                        onMnuNewAdvancedGame();
+                    } else if (Exit.equalsIgnoreCase(item)) {
+                    }
+                }
+            });
+        }
+
+        private DefaultLayoutManager createLayoutManager() {
+            DefaultLayoutManager mgr = new DefaultLayoutManager();
+            mgr.bindToContainer(getRootPanel());
+            return mgr;
+        }
+
+        private void onMnuNewEasyGame() {
+
+        }
+
+        private void onMnuNewAdvancedGame() {
+        }
+
     }
 }

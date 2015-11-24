@@ -36,7 +36,8 @@ public class Message  extends Dialog implements ActionListener  {
 	public Message(String title, String text, String buttonLabel) {
 		super(getWidth(text, title)+4, getHeight(text)+7,true,title);
 
-		DefaultLayoutManager manager = (DefaultLayoutManager)getRootPanel().getLayoutManager();
+		DefaultLayoutManager manager = new DefaultLayoutManager();
+        manager.bindToContainer(getRootPanel());
 
 		_label = new Label(text);
 		_button = new Button(buttonLabel);
