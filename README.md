@@ -14,7 +14,7 @@ The Java Curses Library is a library that makes is possible to create
 text- based terminal applications in the Java programming language,
 like curses under Unix.  For this purpose a windowing toolkit is
 implemented, that, like AWT, consists of many classes for text based
-windows and GUI elements, that are layouted within these windows. An
+windows and GUI elements, that are layout within these windows. An
 application,that bases on the library, creates one or more of this
 windows and reacts on events coming by user interactions with GUI
 elements.
