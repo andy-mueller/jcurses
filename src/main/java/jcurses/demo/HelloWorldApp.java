@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
 
 /**
  * A simple demo application, that allows you to check if jcurses works on your system. Start up the
- * man function. If th application appears on the screen, the jcursess system is working. If not, the application
+ * main function. If th application appears on the screen, the jcursess system is working. If not, the application
  * will trace out diagnostic messages.
  */
 public class HelloWorldApp {
@@ -26,7 +26,7 @@ public class HelloWorldApp {
     private int run(List<String> args) throws Exception {
         Window window = new MainWindow(50, 30);
         window.show();
-        Thread.sleep(50000L);
+        Thread.sleep(5000L);
         return 0;
     }
     static class MainWindow extends Window {

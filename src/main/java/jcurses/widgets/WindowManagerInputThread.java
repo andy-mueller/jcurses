@@ -8,6 +8,8 @@ class WindowManagerInputThread extends Thread {
 	private boolean _run = true;
 	private boolean _read = true;
 	WindowManagerInputThread(){
+		super("JCURSES-INPUT");
+		setDaemon(true);
     }
 
 
